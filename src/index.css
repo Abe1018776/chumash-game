@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  direction: rtl;
+  font-size: 18px;
+}
+
+body {
+  margin: 0;
+  background: #FDF6E3;
+  color: #3E2723;
+  font-family: 'Noto Sans Hebrew', 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* Prevent iOS zoom on input */
+input, select, textarea {
+  font-size: 16px;
+}
+
+/* Touch targets */
+button {
+  min-height: 44px;
+  font-family: 'Noto Sans Hebrew', 'Segoe UI', sans-serif;
+}
