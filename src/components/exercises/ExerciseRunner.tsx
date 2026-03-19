@@ -239,19 +239,13 @@ export default function ExerciseRunner({ lesson, onComplete }: ExerciseRunnerPro
 
 function IntroCard({ word, onNext, isLast }: { word: VocabWord; onNext: () => void; isLast: boolean }) {
   const [flipped, setFlipped] = useState(false);
-  const [recorded, setRecorded] = useState(false);
 
   useState(() => {
     import('../../lib/audioManager').then(m => m.audioManager.speakWord(word.id, word.hebrew));
   });
 
-
   return (
     <div style={{ padding: '16px 16px 0', direction: 'rtl' }}>
-      <div style={{ textAlign: 'center', marginBottom: 12, color: '#795548', fontSize: 15, fontWeight: 600 }}>
-        {flipped ? 'דאס איז דער טייטש — לייען עס אויס!' : 'דריק צו זען דעם טייטש'}
-      </div>
-
       <div
         onClick={() => { if (!flipped) setFlipped(true); }}
         style={{
@@ -273,7 +267,7 @@ function IntroCard({ word, onNext, isLast }: { word: VocabWord; onNext: () => vo
             {word.yiddish}
           </div>
         )}
-        {!flipped && <div style={{ color: '#9E9E9E', fontSize: 13 }}>🔊 דריק אויף דעם קארטל</div>}
+        {!flipped && <div style={{ color: '#9E9E9E', fontSize: 13 }}>tap to see teitsh</div>}
       </div>
 
       <div style={{ textAlign: 'center', marginTop: 8 }}>
@@ -281,14 +275,19 @@ function IntroCard({ word, onNext, isLast }: { word: VocabWord; onNext: () => vo
           onClick={() => import('../../lib/audioManager').then(m => m.audioManager.speakWord(word.id, word.hebrew))}
           style={{ background: 'none', border: '2px solid #009688', borderRadius: 999, padding: '5px 18px', color: '#009688', fontWeight: 600, cursor: 'pointer', fontSize: 13 }}
         >
-          🔊 נאכאמאל הערן
+          🔊 play again
         </button>
       </div>
 
-      {/* Record button — appears after flip */}
-      {flipped && (
-        <RecordButton wordId={word.id} onSaved={() => setRecorded(true)} />
-      )}
+      {/* Two record buttons side by side */}
+      <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+        <div style={{ flex: 1 }}>
+          <RecordButton wordId={`${word.id}-hebrew`} label="Hebrew" />
+        </div>
+        <div style={{ flex: 1 }}>
+          <RecordButton wordId={`${word.id}-teitsh`} label="Teitsh" />
+        </div>
+      </div>
 
       {flipped && (
         <button
@@ -298,12 +297,9 @@ function IntroCard({ word, onNext, isLast }: { word: VocabWord; onNext: () => vo
             border: 'none', borderRadius: 16, padding: '15px',
             fontSize: 17, fontWeight: 800, cursor: 'pointer',
             boxShadow: '0 4px 12px rgba(0,150,136,0.3)',
-            opacity: recorded ? 1 : 0.85,
           }}
         >
-          {recorded
-            ? (isLast ? '!איצט גייט דער קוויז ←' : 'הבא ←')
-            : (isLast ? '!ווייטער (אָן אויפנעמן) ←' : 'ווייטער ←')}
+          {isLast ? 'Start Quiz →' : 'Next →'}
         </button>
       )}
     </div>

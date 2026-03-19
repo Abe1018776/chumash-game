@@ -1,14 +1,16 @@
 import { useState, useRef, useEffect } from 'react';
 import { recordingManager } from '../../lib/recordingManager';
+import { audioManager } from '../../lib/audioManager';
 
 interface RecordButtonProps {
   wordId: string;
-  onSaved: () => void;
+  label: string;
+  onSaved?: () => void;
 }
 
 type State = 'idle' | 'recording' | 'saved';
 
-export default function RecordButton({ wordId, onSaved }: RecordButtonProps) {
+export default function RecordButton({ wordId, label, onSaved }: RecordButtonProps) {
   const [state, setState] = useState<State>('idle');
   const [hasExisting, setHasExisting] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -34,7 +36,8 @@ export default function RecordButton({ wordId, onSaved }: RecordButtonProps) {
         streamRef.current?.getTracks().forEach(t => t.stop());
         setState('saved');
         setHasExisting(true);
-        onSaved();
+        audioManager.playCorrect();
+        onSaved?.();
       };
 
       mr.start();
@@ -50,9 +53,9 @@ export default function RecordButton({ wordId, onSaved }: RecordButtonProps) {
 
   if (state === 'saved') {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginTop: 12 }}>
-        <span style={{ fontSize: 20 }}>✅</span>
-        <span style={{ color: '#4CAF50', fontWeight: 700, fontSize: 14 }}>אויפגענומן!</span>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '8px 0' }}>
+        <span style={{ fontSize: 18 }}>✅</span>
+        <span style={{ color: '#4CAF50', fontWeight: 700, fontSize: 13 }}>{label}</span>
       </div>
     );
   }
@@ -63,16 +66,15 @@ export default function RecordButton({ wordId, onSaved }: RecordButtonProps) {
         onPointerUp={stopRecording}
         onPointerLeave={stopRecording}
         style={{
-          display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
           background: '#FF5252', border: '3px solid #D32F2F',
-          borderRadius: 16, padding: '12px 24px', cursor: 'pointer',
-          marginTop: 12, width: '100%',
+          borderRadius: 12, padding: '10px 16px', cursor: 'pointer', width: '100%',
           animation: 'recordPulse 1s infinite',
         }}
       >
-        <span style={{ fontSize: 28 }}>🎙️</span>
-        <span style={{ color: '#fff', fontWeight: 800, fontSize: 14 }}>מען נעמט אויף... לאז לאָז!</span>
-        <style>{`@keyframes recordPulse { 0%,100%{box-shadow:0 0 0 0 rgba(255,82,82,0.4)} 50%{box-shadow:0 0 0 10px rgba(255,82,82,0)} }`}</style>
+        <span style={{ fontSize: 20 }}>🎙️</span>
+        <span style={{ color: '#fff', fontWeight: 800, fontSize: 13 }}>Recording... release to stop</span>
+        <style>{`@keyframes recordPulse { 0%,100%{box-shadow:0 0 0 0 rgba(255,82,82,0.4)} 50%{box-shadow:0 0 0 8px rgba(255,82,82,0)} }`}</style>
       </button>
     );
   }
@@ -81,16 +83,15 @@ export default function RecordButton({ wordId, onSaved }: RecordButtonProps) {
     <button
       onClick={startRecording}
       style={{
-        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
+        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
         background: hasExisting ? '#E8F5E9' : '#FFF3E0',
         border: `2px solid ${hasExisting ? '#4CAF50' : '#FF9800'}`,
-        borderRadius: 16, padding: '10px 24px', cursor: 'pointer',
-        marginTop: 12, width: '100%',
+        borderRadius: 12, padding: '10px 16px', cursor: 'pointer', width: '100%',
       }}
     >
-      <span style={{ fontSize: 24 }}>🎤</span>
+      <span style={{ fontSize: 20 }}>🎤</span>
       <span style={{ color: hasExisting ? '#2E7D32' : '#E65100', fontWeight: 700, fontSize: 13 }}>
-        {hasExisting ? '🔁 נאכאמאל אויפנעמן' : 'לייען אויס לויט → דריק צו אויפנעמן'}
+        {hasExisting ? `Re-record ${label}` : `Record ${label}`}
       </span>
     </button>
   );
