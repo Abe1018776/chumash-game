@@ -279,10 +279,10 @@ function IntroCard({ word, onNext, isLast }: { word: VocabWord; onNext: () => vo
         </button>
       </div>
 
-      {/* Two record buttons side by side */}
+      {/* Two record buttons side by side — Hebrew key = word.id so speakWord() picks it up */}
       <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
         <div style={{ flex: 1 }}>
-          <RecordButton wordId={`${word.id}-hebrew`} label="Hebrew" />
+          <RecordButton wordId={word.id} label="Hebrew" autoPlay />
         </div>
         <div style={{ flex: 1 }}>
           <RecordButton wordId={`${word.id}-teitsh`} label="Teitsh" />
