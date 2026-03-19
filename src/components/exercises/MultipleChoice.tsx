@@ -4,8 +4,8 @@ import { audioManager } from '../../lib/audioManager';
 
 interface MultipleChoiceProps {
   word: VocabWord;
-  options: VocabWord[]; // includes the correct word
-  reversed?: boolean; // if true: show yiddish, pick hebrew
+  options: VocabWord[];
+  reversed?: boolean;
   onAnswer: (correct: boolean) => void;
 }
 
@@ -29,49 +29,80 @@ export default function MultipleChoice({ word, options, reversed = false, onAnsw
   };
 
   return (
-    <div style={{ padding: '24px 16px', direction: 'rtl' }}>
-      {/* Prompt */}
+    <div style={{ padding: '20px 16px', direction: 'rtl' }}>
+      {/* Question label */}
       <div style={{
         textAlign: 'center',
-        marginBottom: 32,
+        fontSize: 14,
+        fontWeight: 700,
+        color: '#777',
+        marginBottom: 16,
+        letterSpacing: '0.03em',
       }}>
-        {word.emoji && <div style={{ fontSize: 56, marginBottom: 8 }}>{word.emoji}</div>}
+        {reversed ? 'וואָס איז דאס אויף לשון קודש?' : 'וואָס מיינט דאס?'}
+      </div>
+
+      {/* Prompt card */}
+      <div style={{ textAlign: 'center', marginBottom: 28 }}>
+        {word.emoji && (
+          <div style={{ fontSize: 60, marginBottom: 10, filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.15))' }}>
+            {word.emoji}
+          </div>
+        )}
         <button
           onClick={() => audioManager.speak(word.hebrew)}
           style={{
-            background: '#F5F5F5',
-            border: 'none',
-            borderRadius: 16,
-            padding: '16px 32px',
+            background: 'linear-gradient(180deg, #ffffff 0%, #f8f8f8 100%)',
+            border: '3px solid #E5E5E5',
+            borderRadius: 20,
+            padding: reversed ? '16px 32px' : '20px 40px',
             cursor: 'pointer',
-            fontSize: reversed ? 20 : 36,
+            fontSize: reversed ? 20 : 38,
             fontFamily: reversed ? 'inherit' : "'Noto Serif Hebrew', serif",
             fontWeight: 700,
             color: '#3E2723',
             direction: 'rtl',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+            boxShadow: '0 4px 0 #D5D5D5',
             lineHeight: 1.4,
+            display: 'inline-block',
+            transition: 'transform 0.1s, box-shadow 0.1s',
+            minWidth: 160,
           }}
         >
           {prompt}
-          {!reversed && <span style={{ fontSize: 14, display: 'block', color: '#9E9E9E', fontFamily: 'sans-serif' }}>🔊 דריק צו הערן</span>}
+          {!reversed && (
+            <div style={{ fontSize: 13, color: '#AAA', fontFamily: 'sans-serif', marginTop: 4, fontWeight: 600 }}>
+              🔊 דריק צו הערן
+            </div>
+          )}
         </button>
-        <div style={{ marginTop: 12, color: '#795548', fontSize: 16, fontWeight: 600 }}>
-          {reversed ? 'וואָס איז דאס אויף לשון קודש?' : 'וואָס מיינט דאס?'}
-        </div>
       </div>
 
       {/* Options */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         {options.map(opt => {
           const isSelected = selected === opt.id;
           const isCorrect = opt.id === word.id;
-          let bg = '#fff';
-          let border = '2.5px solid #D7CCC8';
+
+          let bg = 'linear-gradient(180deg, #ffffff 0%, #f8f8f8 100%)';
+          let border = '3px solid #E5E5E5';
           let color = '#3E2723';
-          if (answered && isSelected && isCorrect) { bg = '#E8F5E9'; border = '2.5px solid #4CAF50'; color = '#2E7D32'; }
-          else if (answered && isSelected && !isCorrect) { bg = '#FFF3E0'; border = '2.5px solid #FF9800'; color = '#E65100'; }
-          else if (answered && isCorrect) { bg = '#E8F5E9'; border = '2.5px solid #4CAF50'; color = '#2E7D32'; }
+          let shadow = '0 4px 0 #D5D5D5';
+          let icon = '';
+
+          if (answered && isCorrect) {
+            bg = 'linear-gradient(180deg, #D7F5A0 0%, #C2EC7A 100%)';
+            border = '3px solid #58CC02';
+            color = '#2A6600';
+            shadow = '0 4px 0 #46A302';
+            icon = '✓ ';
+          } else if (answered && isSelected && !isCorrect) {
+            bg = 'linear-gradient(180deg, #FFE5E5 0%, #FFCCCC 100%)';
+            border = '3px solid #FF4B4B';
+            color = '#CC0000';
+            shadow = '0 4px 0 #CC3333';
+            icon = '✗ ';
+          }
 
           const displayText = reversed ? opt.hebrew : opt.yiddish;
           return (
@@ -82,24 +113,23 @@ export default function MultipleChoice({ word, options, reversed = false, onAnsw
               style={{
                 background: bg,
                 border,
-                borderRadius: 14,
+                borderRadius: 16,
                 padding: '16px 20px',
-                fontSize: reversed ? 28 : 18,
+                fontSize: reversed ? 26 : 17,
                 fontFamily: reversed ? "'Noto Serif Hebrew', serif" : 'inherit',
-                fontWeight: 600,
+                fontWeight: 700,
                 color,
                 cursor: answered ? 'default' : 'pointer',
                 textAlign: 'center',
                 direction: 'rtl',
-                transition: 'all 0.2s',
-                transform: isSelected ? 'scale(0.98)' : 'scale(1)',
-                boxShadow: '0 2px 6px rgba(0,0,0,0.06)',
+                transition: 'transform 0.1s, box-shadow 0.1s',
+                transform: isSelected && answered ? 'translateY(2px)' : 'translateY(0)',
+                boxShadow: isSelected && answered ? '0 2px 0 #ccc' : shadow,
                 lineHeight: 1.4,
-                minHeight: 56,
+                minHeight: 58,
               }}
             >
-              {answered && isCorrect ? '✓ ' : ''}{displayText}
-              {answered && isSelected && !isCorrect ? ' ✗' : ''}
+              {icon}{displayText}
             </button>
           );
         })}

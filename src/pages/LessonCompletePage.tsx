@@ -46,8 +46,8 @@ export default function LessonCompletePage() {
     <div style={{
       minHeight: '100vh',
       background: passed
-        ? 'linear-gradient(135deg, #FDF6E3 0%, #E8F5E9 100%)'
-        : 'linear-gradient(135deg, #FDF6E3 0%, #FFF3E0 100%)',
+        ? 'linear-gradient(160deg, #E8FFC2 0%, #D0F5FF 50%, #E8FFC2 100%)'
+        : 'linear-gradient(160deg, #FFF3CD 0%, #FFE0E0 100%)',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
@@ -59,51 +59,77 @@ export default function LessonCompletePage() {
 
       <div style={{
         background: '#fff',
-        borderRadius: 24,
-        padding: '32px 24px',
+        borderRadius: 28,
+        padding: '36px 24px 28px',
         textAlign: 'center',
-        boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+        boxShadow: passed
+          ? '0 8px 0 #46A302, 0 12px 32px rgba(88,204,2,0.2)'
+          : '0 8px 0 #CC3333, 0 12px 32px rgba(255,75,75,0.2)',
+        border: `3px solid ${passed ? '#58CC02' : '#FF4B4B'}`,
         maxWidth: 400,
         width: '100%',
       }}>
         {passed ? (
           <>
-            <div style={{ fontSize: 64, marginBottom: 4 }}>🎉</div>
-            <h2 style={{ fontSize: 28, fontWeight: 900, color: '#3E2723', margin: '0 0 12px' }}>{msg}</h2>
-            <StarRating stars={stars} size={38} />
-            <div style={{
-              background: '#FDF6E3',
-              borderRadius: 12,
-              padding: '10px 20px',
-              margin: '16px 0',
-              fontSize: 20,
-              fontWeight: 700,
-              color: '#F9A825',
-            }}>
-              ⭐ +{totalPoints} נקודות
+            <div style={{ fontSize: 72, marginBottom: 8, filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.2))', animation: 'bounce 0.6s ease' }}>
+              🎉
             </div>
-            <div style={{ color: '#4CAF50', fontWeight: 700, fontSize: 15, marginBottom: 16 }}>
-              ✓ {correctWords} פון {totalWords} ווערטער — דער קומענדיקער פּסוק איז פרייגעשלאסן!
+            <h2 style={{ fontSize: 32, fontWeight: 900, color: '#3E2723', margin: '0 0 16px' }}>{msg}</h2>
+            <div style={{ marginBottom: 16 }}>
+              <StarRating stars={stars} size={44} />
+            </div>
+            <div style={{
+              background: 'linear-gradient(135deg, #FFF9C4, #FFF176)',
+              border: '3px solid #FFC800',
+              borderRadius: 16,
+              padding: '12px 24px',
+              margin: '0 0 16px',
+              boxShadow: '0 4px 0 #E6B400',
+            }}>
+              <div style={{ fontSize: 24, fontWeight: 900, color: '#3E2723' }}>⭐ +{totalPoints}</div>
+              <div style={{ fontSize: 13, color: '#888', fontWeight: 600 }}>נקודות</div>
+            </div>
+            <div style={{
+              background: '#E9FFC0',
+              border: '2px solid #58CC02',
+              borderRadius: 14,
+              padding: '10px 16px',
+              marginBottom: 20,
+              color: '#2A6600',
+              fontWeight: 700,
+              fontSize: 14,
+            }}>
+              ✓ {correctWords} / {totalWords} ווערטער — דער קומענדיקער פּסוק איז פרייגעשלאסן!
             </div>
           </>
         ) : (
           <>
-            <div style={{ fontSize: 64, marginBottom: 4 }}>📚</div>
-            <h2 style={{ fontSize: 24, fontWeight: 900, color: '#3E2723', margin: '0 0 8px' }}>
-              כּמעט! {correctWords} פון {totalWords} ריכטיק
+            <div style={{ fontSize: 72, marginBottom: 8 }}>📚</div>
+            <h2 style={{ fontSize: 26, fontWeight: 900, color: '#3E2723', margin: '0 0 8px' }}>
+              כּמעט! {correctWords} / {totalWords} ריכטיק
             </h2>
-            <div style={{ color: '#E65100', fontWeight: 600, fontSize: 15, marginBottom: 12 }}>
+            <div style={{
+              background: '#FFE5E5',
+              border: '2px solid #FF4B4B',
+              borderRadius: 14,
+              padding: '10px 16px',
+              marginBottom: 12,
+              color: '#CC0000',
+              fontWeight: 700,
+              fontSize: 14,
+            }}>
               דו דארפסט 80% כּדי צו קומען צום קומענדיקן פּסוק
             </div>
             {wrongWordIds.length > 0 && (
               <div style={{
-                background: '#FFF3E0',
-                borderRadius: 12,
+                background: '#FFF9E6',
+                border: '2px solid #FFC800',
+                borderRadius: 14,
                 padding: '12px 16px',
-                marginBottom: 12,
+                marginBottom: 16,
                 textAlign: 'right',
               }}>
-                <div style={{ fontWeight: 700, color: '#E65100', marginBottom: 6, fontSize: 13 }}>
+                <div style={{ fontWeight: 900, color: '#CC8800', marginBottom: 8, fontSize: 13 }}>
                   🔁 קומט ווידער נאכסטן מאל:
                 </div>
                 {wrongWordIds.map(id => {
@@ -111,11 +137,14 @@ export default function LessonCompletePage() {
                   return w ? (
                     <div key={id} style={{
                       fontFamily: "'Noto Serif Hebrew', serif",
-                      fontSize: 18,
+                      fontSize: 17,
                       color: '#3E2723',
-                      margin: '3px 0',
+                      margin: '4px 0',
+                      padding: '4px 8px',
+                      background: 'rgba(255,200,0,0.1)',
+                      borderRadius: 8,
                     }}>
-                      {w.hebrew} — {w.yiddish}
+                      {w.hebrew} — <span style={{ color: '#555' }}>{w.yiddish}</span>
                     </div>
                   ) : null;
                 })}
@@ -128,15 +157,18 @@ export default function LessonCompletePage() {
           <button
             onClick={() => navigate('/')}
             style={{
-              background: '#009688',
+              background: passed
+                ? 'linear-gradient(180deg, #58CC02 0%, #4DB800 100%)'
+                : 'linear-gradient(180deg, #FF4B4B 0%, #E63333 100%)',
               color: '#fff',
               border: 'none',
-              borderRadius: 14,
-              padding: '15px',
-              fontSize: 17,
-              fontWeight: 800,
+              borderRadius: 16,
+              padding: '16px',
+              fontSize: 18,
+              fontWeight: 900,
               cursor: 'pointer',
-              boxShadow: '0 4px 12px rgba(0,150,136,0.35)',
+              boxShadow: passed ? '0 5px 0 #46A302' : '0 5px 0 #CC2222',
+              letterSpacing: '0.02em',
             }}
           >
             {passed ? '!ווייטער ▶' : '!צוריק צום מאפּ'}
@@ -144,20 +176,29 @@ export default function LessonCompletePage() {
           <button
             onClick={() => navigate(`/lesson/${lessonId}`)}
             style={{
-              background: 'none',
-              border: '2px solid #D7CCC8',
-              borderRadius: 14,
-              padding: '13px',
-              fontSize: 15,
-              fontWeight: 700,
-              color: '#795548',
+              background: 'linear-gradient(180deg, #ffffff 0%, #f0f0f0 100%)',
+              border: '3px solid #E5E5E5',
+              borderRadius: 16,
+              padding: '14px',
+              fontSize: 16,
+              fontWeight: 800,
+              color: '#777',
               cursor: 'pointer',
+              boxShadow: '0 4px 0 #D0D0D0',
             }}
           >
             🔄 {passed ? 'נאכאמאל שפּילן' : 'פּרובירן נאכאמאל'}
           </button>
         </div>
       </div>
+
+      <style>{`
+        @keyframes bounce {
+          0% { transform: scale(0.5); opacity: 0; }
+          60% { transform: scale(1.2); }
+          100% { transform: scale(1); opacity: 1; }
+        }
+      `}</style>
     </div>
   );
 }

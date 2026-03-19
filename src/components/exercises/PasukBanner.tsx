@@ -1,7 +1,7 @@
 interface PasukBannerProps {
   pasukNumber: number;
   pasukText: string;
-  highlight?: string; // exact substring to highlight in the pasuk
+  highlight?: string;
 }
 
 const PASUK_LETTERS = ['', 'א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ז', 'ח', 'ט', 'י'];
@@ -9,7 +9,6 @@ const PASUK_LETTERS = ['', 'א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ז', 'ח', 'ט',
 export default function PasukBanner({ pasukNumber, pasukText, highlight }: PasukBannerProps) {
   const letter = PASUK_LETTERS[pasukNumber] ?? String(pasukNumber);
 
-  // Split text around the highlight word so we can color it
   let before = pasukText;
   let mid = '';
   let after = '';
@@ -24,26 +23,37 @@ export default function PasukBanner({ pasukNumber, pasukText, highlight }: Pasuk
 
   return (
     <div style={{
-      background: '#FFF8E1',
-      borderBottom: '2px solid #F9A825',
-      padding: '10px 16px',
+      background: 'linear-gradient(135deg, #FFF9E6 0%, #FFF3CC 100%)',
+      borderBottom: '3px solid #FFC800',
+      padding: '10px 16px 12px',
       direction: 'rtl',
+      position: 'relative',
+      overflow: 'hidden',
     }}>
+      {/* Decorative dots */}
+      <div style={{ position: 'absolute', top: -8, left: -8, width: 40, height: 40, borderRadius: '50%', background: 'rgba(255,200,0,0.15)' }} />
+      <div style={{ position: 'absolute', bottom: -10, right: -10, width: 50, height: 50, borderRadius: '50%', background: 'rgba(255,200,0,0.1)' }} />
+
       <div style={{
+        display: 'inline-block',
+        background: '#FFC800',
+        color: '#3E2723',
         fontSize: 11,
-        fontWeight: 700,
-        color: '#F57F17',
+        fontWeight: 900,
+        borderRadius: 999,
+        padding: '2px 10px',
+        marginBottom: 6,
         letterSpacing: '0.05em',
-        marginBottom: 4,
-        textTransform: 'uppercase',
+        boxShadow: '0 2px 0 #E6B400',
       }}>
-        פּסוק {letter}
+        📖 פּסוק {letter}
       </div>
+
       <div style={{
         fontFamily: "'Noto Serif Hebrew', serif",
         fontSize: 15,
-        lineHeight: 1.9,
-        color: '#5D4037',
+        lineHeight: 2,
+        color: '#4A3000',
         direction: 'rtl',
         textAlign: 'right',
       }}>
@@ -51,11 +61,14 @@ export default function PasukBanner({ pasukNumber, pasukText, highlight }: Pasuk
           <>
             <span>{before}</span>
             <span style={{
-              background: '#F9A825',
+              background: '#FFC800',
               color: '#3E2723',
-              borderRadius: 4,
-              padding: '1px 3px',
-              fontWeight: 800,
+              borderRadius: 6,
+              padding: '0 4px',
+              fontWeight: 900,
+              boxShadow: '0 2px 0 #E6B400',
+              display: 'inline-block',
+              lineHeight: 1.6,
             }}>{mid}</span>
             <span>{after}</span>
           </>

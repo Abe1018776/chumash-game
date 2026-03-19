@@ -11,9 +11,22 @@ function getAudioCtx() {
 class AudioManager {
   private muted = false;
 
-  // ── Word audio ─────────────────────────────────────────────────────────────
-  speakWord(wordId: string, hebrewText: string): void {
+  // ── Word audio — IndexedDB recording → bundled MP3 → TTS ──────────────────
+  async speakWord(wordId: string, hebrewText: string): Promise<void> {
     if (this.muted) return;
+    try {
+      const { recordingManager } = await import('./recordingManager');
+      const url = await recordingManager.getURL(wordId);
+      if (url) {
+        const audio = new Audio(url);
+        audio.play().catch(() => this._speakMP3orTTS(wordId, hebrewText));
+        return;
+      }
+    } catch { /* no IndexedDB */ }
+    this._speakMP3orTTS(wordId, hebrewText);
+  }
+
+  private _speakMP3orTTS(wordId: string, hebrewText: string): void {
     const audio = new Audio(`/audio/words/${wordId}.mp3`);
     audio.onerror = () => this.speak(hebrewText);
     audio.oncanplay = () => { audio.play().catch(() => this.speak(hebrewText)); };
