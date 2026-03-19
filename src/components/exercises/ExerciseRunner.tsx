@@ -110,10 +110,13 @@ export default function ExerciseRunner({ lesson, onComplete }: ExerciseRunnerPro
       newHearts = hearts - 1;
       setHearts(newHearts);
       import('../../lib/audioManager').then(m => m.audioManager.playHeartLost());
-    } else if (pts > 0) {
-      setLastPoints(pts);
-      setShowPoints(true);
-      setTimeout(() => setShowPoints(false), 1200);
+    } else {
+      import('../../lib/audioManager').then(m => m.audioManager.playCorrect());
+      if (pts > 0) {
+        setLastPoints(pts);
+        setShowPoints(true);
+        setTimeout(() => setShowPoints(false), 1200);
+      }
     }
 
     const newResults = [...results, result];
