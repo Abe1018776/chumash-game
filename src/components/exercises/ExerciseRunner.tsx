@@ -5,10 +5,12 @@ import { calculatePoints } from '../../lib/scoring';
 import { useProgress } from '../../context/ProgressContext';
 import MultipleChoice from './MultipleChoice';
 import ListenChoice from './ListenChoice';
+import TeitschMatch from './TeitschMatch';
 import PasukBanner from './PasukBanner';
 import ProgressBar from '../layout/ProgressBar';
 import PointsPopup from '../gamification/PointsPopup';
 import HeartsBar from './HeartsBar';
+import RecordButton from './RecordButton';
 
 const MAX_HEARTS = 3;
 type QuizType = 'mc' | 'listen' | 'reverse';
@@ -20,7 +22,7 @@ interface ExerciseRunnerProps {
   onComplete: (results: ExerciseResult[], passed: boolean, stars: number, wrongWordIds: string[]) => void;
 }
 
-type Phase = 'introduce' | 'quiz' | 'no-hearts';
+type Phase = 'introduce' | 'quiz' | 'match' | 'no-hearts';
 
 export default function ExerciseRunner({ lesson, onComplete }: ExerciseRunnerProps) {
   const { getReviewWords, updateWordMastery } = useProgress();
@@ -55,6 +57,19 @@ export default function ExerciseRunner({ lesson, onComplete }: ExerciseRunnerPro
   const [showPoints, setShowPoints] = useState(false);
   const [hearts, setHearts] = useState(MAX_HEARTS);
   const [quizFirstTry, setQuizFirstTry] = useState(true);
+
+  const finish = useCallback((resultsToUse: ExerciseResult[]) => {
+    const correctCount = lesson.wordIds.filter(id =>
+      resultsToUse.some(r => r.wordId === id && r.correct)
+    ).length;
+    const wrongWordIds = lesson.wordIds.filter(id =>
+      !resultsToUse.some(r => r.wordId === id && r.correct)
+    );
+    const accuracy = lesson.wordIds.length > 0 ? correctCount / lesson.wordIds.length : 0;
+    const passed = accuracy >= 0.8;
+    const stars = accuracy >= 0.9 ? 3 : accuracy >= 0.7 ? 2 : 1;
+    onComplete(resultsToUse, passed, stars, wrongWordIds);
+  }, [lesson.wordIds, onComplete]);
 
   // ── Introduce phase ────────────────────────────────────────────────────────
 
@@ -104,24 +119,12 @@ export default function ExerciseRunner({ lesson, onComplete }: ExerciseRunnerPro
     const newResults = [...results, result];
     setResults(newResults);
 
-    const finish = () => {
-      const correctCount = lesson.wordIds.filter(id =>
-        newResults.some(r => r.wordId === id && r.correct)
-      ).length;
-      const wrongWordIds = lesson.wordIds.filter(id =>
-        !newResults.some(r => r.wordId === id && r.correct)
-      );
-      const accuracy = lesson.wordIds.length > 0 ? correctCount / lesson.wordIds.length : 0;
-      const passed = accuracy >= 0.8;
-      const stars = accuracy >= 0.9 ? 3 : accuracy >= 0.7 ? 2 : 1;
-      onComplete(newResults, passed, stars, wrongWordIds);
-    };
-
     const advance = () => {
       if (newHearts <= 0) { setPhase('no-hearts'); return; }
       const next = quizIdx + 1;
       if (next >= quizPlan.length) {
-        finish();
+        // Go to match game finale before finishing
+        setPhase('match');
       } else {
         setQuizIdx(next);
         setQuizFirstTry(true);
@@ -133,7 +136,7 @@ export default function ExerciseRunner({ lesson, onComplete }: ExerciseRunnerPro
       setQuizFirstTry(false);
       setTimeout(advance, 1000);
     }
-  }, [quizWord, step, quizFirstTry, hearts, results, quizIdx, quizPlan.length, lesson.wordIds, updateWordMastery, onComplete]);
+  }, [quizWord, step, quizFirstTry, hearts, results, quizIdx, quizPlan.length, updateWordMastery, finish]);
 
   // ── Render ─────────────────────────────────────────────────────────────────
 
@@ -180,6 +183,23 @@ export default function ExerciseRunner({ lesson, onComplete }: ExerciseRunnerPro
     );
   }
 
+  // Match game finale
+  if (phase === 'match') {
+    const matchWords = lesson.wordIds.map(id => getWordById(id)).filter((w): w is VocabWord => !!w);
+    return (
+      <div style={{ direction: 'rtl', minHeight: '100vh', background: '#FDF6E3' }}>
+        <PasukBanner pasukNumber={lesson.pasukNumber} pasukText={lesson.pasukText} />
+        <div style={{ textAlign: 'center', padding: '10px 16px 0', color: '#009688', fontWeight: 800, fontSize: 15 }}>
+          🏆 סוף חזרה — פאַרבינד אַלעס!
+        </div>
+        <TeitschMatch
+          words={matchWords}
+          onComplete={() => finish(results)}
+        />
+      </div>
+    );
+  }
+
   if (!quizWord || !step) return null;
 
   return (
@@ -216,15 +236,17 @@ export default function ExerciseRunner({ lesson, onComplete }: ExerciseRunnerPro
 
 function IntroCard({ word, onNext, isLast }: { word: VocabWord; onNext: () => void; isLast: boolean }) {
   const [flipped, setFlipped] = useState(false);
+  const [recorded, setRecorded] = useState(false);
 
   useState(() => {
     import('../../lib/audioManager').then(m => m.audioManager.speakWord(word.id, word.hebrew));
   });
 
+
   return (
     <div style={{ padding: '16px 16px 0', direction: 'rtl' }}>
       <div style={{ textAlign: 'center', marginBottom: 12, color: '#795548', fontSize: 15, fontWeight: 600 }}>
-        {flipped ? 'דאס איז דער טייטש:' : 'דריק צו זען דעם טייטש'}
+        {flipped ? 'דאס איז דער טייטש — לייען עס אויס!' : 'דריק צו זען דעם טייטש'}
       </div>
 
       <div
@@ -232,22 +254,26 @@ function IntroCard({ word, onNext, isLast }: { word: VocabWord; onNext: () => vo
         style={{
           background: flipped ? '#E8F5E9' : '#fff',
           border: `3px solid ${flipped ? '#4CAF50' : '#009688'}`,
-          borderRadius: 20, padding: '32px 24px', textAlign: 'center',
+          borderRadius: 20, padding: '28px 24px', textAlign: 'center',
           cursor: flipped ? 'default' : 'pointer',
           boxShadow: '0 4px 20px rgba(0,0,0,0.1)', transition: 'all 0.3s',
-          minHeight: 180, display: 'flex', flexDirection: 'column',
+          minHeight: 160, display: 'flex', flexDirection: 'column',
           alignItems: 'center', justifyContent: 'center', gap: 10,
         }}
       >
-        {word.emoji && <div style={{ fontSize: 48 }}>{word.emoji}</div>}
-        <div style={{ fontSize: 44, fontFamily: "'Noto Serif Hebrew', serif", fontWeight: 700, color: '#3E2723', lineHeight: 1.4 }}>
+        {word.emoji && <div style={{ fontSize: 44 }}>{word.emoji}</div>}
+        <div style={{ fontSize: 42, fontFamily: "'Noto Serif Hebrew', serif", fontWeight: 700, color: '#3E2723', lineHeight: 1.4 }}>
           {word.hebrew}
         </div>
-        {flipped && <div style={{ fontSize: 22, color: '#2E7D32', fontWeight: 600, marginTop: 6 }}>{word.yiddish}</div>}
+        {flipped && (
+          <div style={{ fontSize: 24, color: '#2E7D32', fontWeight: 700, marginTop: 6, direction: 'rtl' }}>
+            {word.yiddish}
+          </div>
+        )}
         {!flipped && <div style={{ color: '#9E9E9E', fontSize: 13 }}>🔊 דריק אויף דעם קארטל</div>}
       </div>
 
-      <div style={{ textAlign: 'center', marginTop: 10 }}>
+      <div style={{ textAlign: 'center', marginTop: 8 }}>
         <button
           onClick={() => import('../../lib/audioManager').then(m => m.audioManager.speakWord(word.id, word.hebrew))}
           style={{ background: 'none', border: '2px solid #009688', borderRadius: 999, padding: '5px 18px', color: '#009688', fontWeight: 600, cursor: 'pointer', fontSize: 13 }}
@@ -256,17 +282,25 @@ function IntroCard({ word, onNext, isLast }: { word: VocabWord; onNext: () => vo
         </button>
       </div>
 
+      {/* Record button — appears after flip */}
+      {flipped && (
+        <RecordButton wordId={word.id} onSaved={() => setRecorded(true)} />
+      )}
+
       {flipped && (
         <button
           onClick={onNext}
           style={{
-            marginTop: 20, width: '100%', background: '#009688', color: '#fff',
-            border: 'none', borderRadius: 16, padding: '16px',
-            fontSize: 18, fontWeight: 800, cursor: 'pointer',
+            marginTop: 12, width: '100%', background: '#009688', color: '#fff',
+            border: 'none', borderRadius: 16, padding: '15px',
+            fontSize: 17, fontWeight: 800, cursor: 'pointer',
             boxShadow: '0 4px 12px rgba(0,150,136,0.3)',
+            opacity: recorded ? 1 : 0.85,
           }}
         >
-          {isLast ? '!איצט גייט דער קוויז ←' : 'הבא ←'}
+          {recorded
+            ? (isLast ? '!איצט גייט דער קוויז ←' : 'הבא ←')
+            : (isLast ? '!ווייטער (אָן אויפנעמן) ←' : 'ווייטער ←')}
         </button>
       )}
     </div>
