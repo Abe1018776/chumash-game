@@ -152,7 +152,7 @@ export default function ExerciseRunner({ lesson, onComplete }: ExerciseRunnerPro
           לערן — {introduceIdx + 1} פון {lesson.wordIds.length}
         </div>
         <ProgressBar current={introduceIdx} total={lesson.wordIds.length} />
-        <IntroCard word={introduceWord} onNext={handleIntroNext} isLast={introduceIdx === lesson.wordIds.length - 1} />
+        <IntroCard key={introduceWord.id} word={introduceWord} onNext={handleIntroNext} isLast={introduceIdx === lesson.wordIds.length - 1} />
       </div>
     );
   }
