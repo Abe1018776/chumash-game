@@ -3,26 +3,26 @@ import { VocabWord } from '../types';
 export const VOCABULARY: VocabWord[] = [
   // ── פסוק א ──────────────────────────────────────────────────────────
   { id: 'vayikra',    hebrew: 'וַיִּקְרָא',     yiddish: 'און ער האט גערופן',        emoji: '📢', category: 'general', pasukId: 'pasuk-1', highlight: 'וַיִּקְרָא' },
-  { id: 'ohelmoed',   hebrew: 'אֹהֶל מוֹעֵד',   yiddish: 'אהל מועד',                 emoji: '⛺', category: 'general', pasukId: 'pasuk-1', highlight: 'אֹהֶל מוֹעֵד' },
+  { id: 'ohelmoed',   hebrew: 'אֹהֶל מוֹעֵד',   yiddish: 'אוהל מועד',                emoji: '⛺', category: 'general', pasukId: 'pasuk-1', highlight: 'אֹהֶל מוֹעֵד' },
 
   // ── פסוק ב ──────────────────────────────────────────────────────────
   { id: 'adam',       hebrew: 'אָדָם',           yiddish: 'א מענטש',                  emoji: '🧑', category: 'general', pasukId: 'pasuk-2', highlight: 'אָדָם' },
   { id: 'korban',     hebrew: 'קָרְבָּן',         yiddish: 'א קרבן',                   emoji: '🐂', category: 'olah',    pasukId: 'pasuk-2', highlight: 'קָרְבָּן' },
-  { id: 'bakar',      hebrew: 'הַבָּקָר',         yiddish: 'פון די רינד',              emoji: '🐄', category: 'olah',    pasukId: 'pasuk-2', highlight: 'הַבָּקָר' },
+  { id: 'bakar',      hebrew: 'הַבָּקָר',         yiddish: 'פון די רינדער',            emoji: '🐄', category: 'olah',    pasukId: 'pasuk-2', highlight: 'הַבָּקָר' },
   { id: 'tzon',       hebrew: 'הַצֹּאן',          yiddish: 'פון די שאף',               emoji: '🐑', category: 'olah',    pasukId: 'pasuk-2', highlight: 'הַצֹּאן' },
 
   // ── פסוק ג ──────────────────────────────────────────────────────────
   { id: 'olah',       hebrew: 'עֹלָה',            yiddish: 'א קרבן עולה',              emoji: '🔥', category: 'olah',    pasukId: 'pasuk-3', highlight: 'עֹלָה' },
   { id: 'zachar',     hebrew: 'זָכָר',            yiddish: 'א זכר',                    emoji: '♂️', category: 'olah',    pasukId: 'pasuk-3', highlight: 'זָכָר' },
-  { id: 'tamim',      hebrew: 'תָּמִים',           yiddish: 'א גאנצער אן א פעלער',     emoji: '✅', category: 'olah',    pasukId: 'pasuk-3', highlight: 'תָּמִים' },
-  { id: 'petach',     hebrew: 'פֶּתַח',           yiddish: 'די טייהר',                 emoji: '🚪', category: 'general', pasukId: 'pasuk-3', highlight: 'פֶּתַח' },
-  { id: 'lirtzono',   hebrew: 'לִרְצֹנוֹ',        yiddish: 'עס וועט ווערן באוויליגנט', emoji: '🙌', category: 'olah',   pasukId: 'pasuk-3', highlight: 'לִרְצֹנוֹ' },
+  { id: 'tamim',      hebrew: 'תָּמִים',           yiddish: 'א גאנצער אהן א פעלער',    emoji: '✅', category: 'olah',    pasukId: 'pasuk-3', highlight: 'תָּמִים' },
+  { id: 'petach',     hebrew: 'פֶּתַח',           yiddish: 'די טיהר',                  emoji: '🚪', category: 'general', pasukId: 'pasuk-3', highlight: 'פֶּתַח' },
+  { id: 'lirtzono',   hebrew: 'לִרְצֹנוֹ',        yiddish: 'צו זיין גוטן ווילן',        emoji: '🙌', category: 'olah',   pasukId: 'pasuk-3', highlight: 'לִרְצֹנוֹ' },
 
   // ── פסוק ד ──────────────────────────────────────────────────────────
   { id: 'vesamach',   hebrew: 'וְסָמַךְ',         yiddish: 'און ער זאל אנשפארן',       emoji: '🤲', category: 'olah',    pasukId: 'pasuk-4', highlight: 'וְסָמַךְ' },
   { id: 'yado',       hebrew: 'יָדוֹ',            yiddish: 'זיין האנט',                emoji: '🤚', category: 'olah',    pasukId: 'pasuk-4', highlight: 'יָדוֹ' },
   { id: 'rosh',       hebrew: 'רֹאשׁ',            yiddish: 'דעם קאפ',                  emoji: '👆', category: 'olah',    pasukId: 'pasuk-4', highlight: 'רֹאשׁ' },
-  { id: 'venirtzah',  hebrew: 'וְנִרְצָה',        yiddish: 'עס וועט ווערן באוויליגנט', emoji: '✨', category: 'olah',   pasukId: 'pasuk-4', highlight: 'וְנִרְצָה' },
+  { id: 'venirtzah',  hebrew: 'וְנִרְצָה',        yiddish: 'עס וועט ווערין באוויליגט', emoji: '✨', category: 'olah',   pasukId: 'pasuk-4', highlight: 'וְנִרְצָה' },
   { id: 'lechaper',   hebrew: 'לְכַפֵּר',          yiddish: 'צו פארגעבן',               emoji: '🙏', category: 'general', pasukId: 'pasuk-4', highlight: 'לְכַפֵּר' },
 
   // ── פסוק ה ──────────────────────────────────────────────────────────
